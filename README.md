@@ -12,6 +12,10 @@ DAEMON - shows connection type ie. ssh, telnet
 SHP - pid of the login shell (helpful if you are an ugly administrator
 	that whishes to kill someone's sesssion ;-)
 
+Compile:
+./configure && make
+```
 Usage: yawho [-l] [username ...]
 	-l	long display - don't cut processes names
  
+```
