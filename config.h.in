@@ -1,0 +1,40 @@
+/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+
+/* Define if your struct stat has st_rdev.  */
+#undef HAVE_ST_RDEV
+
+/* Define if you have the ANSI C header files.  */
+#undef STDC_HEADERS
+
+/* Define if you have the <fcntl.h> header file.  */
+#undef HAVE_FCNTL_H
+
+/* Define if you have the <sys/ioctl.h> header file.  */
+#undef HAVE_SYS_IOCTL_H
+
+/* Define if you have the <unistd.h> header file.  */
+#undef HAVE_UNISTD_H
+
+/* Define if you have the kvm library (-lkvm).  */
+#undef HAVE_LIBKVM
+
+/* define if your system is FreeBSD or OpenBSD */
+#undef BSDISH
+
+/* define if Linux is OS of your choice */
+#undef LINUX
+
+/* define if struct kinfo_proc is in sys/user.h */
+#undef HAVE_KINFO_IN_USER_H
+
+/* define if utmp has ut_pid - pid of a login shell */
+#undef HAVE_PID_IN_UTMP
+
+/* define if utmp structure has ut_name */
+#undef HAVE_NAME_IN_UTMP
+
+/* define if utmp structure has ut_user */
+#undef HAVE_USER_IN_UTMP
+
+/* define if utmp has USER_PROCESS type */
+#undef HAVE_UPROCESS_TYPE

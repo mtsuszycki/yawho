@@ -1,0 +1,100 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(yawho.c)
+
+VERSION="1.2"
+PACKAGE=yawho
+
+AC_SUBST(VERSION)
+AC_SUBST(PACKAGE)
+
+AC_CONFIG_HEADER(config.h)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_CPP
+
+AC_PROG_INSTALL
+
+dnl Check for system type
+AC_MSG_CHECKING([Checking operating system])
+osfound=no
+case "`uname -s`" in
+Linux)
+	AC_DEFINE(LINUX)
+	osfound=yes
+	;;
+FreeBSD)
+	AC_DEFINE(BSDISH)
+	osfound=yes
+	;;
+OpenBSD)
+	AC_DEFINE(BSDISH)
+	osfound=yes
+	;;
+esac
+
+AC_MSG_RESULT(`uname -s`)
+
+if test "$osfound" = "no" ; then
+AC_MSG_WARN([OS not supported - see what we can do])
+AC_MSG_CHECKING([if sysctl works as needed])
+AC_TRY_COMPILE([#include <sys/types.h>
+#include <sys/param.h>
+#include <sys/sysctl.h>],
+[
+int mib[]={CTL_KERN,KERN_PROC,KERN_PROC_PID,1};
+int len;
+sysctl(mib, 4, 0, &len, 0, 0);
+],
+[AC_MSG_RESULT(yes); AC_DEFINE(BSDISH)],
+AC_MSG_RESULT(no); 
+AC_MSG_ERROR([Giving up. Could not use sysctl() to gather processes info.]))
+fi
+
+dnl Checks for libraries.
+AC_CHECK_LIB(kvm, kvm_open)
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS(fcntl.h sys/ioctl.h unistd.h)
+AC_MSG_CHECKING([whether sys/user.h has struct kinfo_proc])
+AC_EGREP_HEADER(struct kinfo_proc, sys/user.h, 
+	[AC_DEFINE(HAVE_KINFO_IN_USER_H)
+	AC_MSG_RESULT(yes)], AC_MSG_RESULT(no))
+
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_STRUCT_ST_RDEV
+
+dnl Check utmp structure
+AC_MSG_CHECKING([whether utmp has ut_pid])
+AC_EGREP_HEADER(ut_pid, utmp.h, [AC_DEFINE(HAVE_PID_IN_UTMP)
+	AC_MSG_RESULT(yes)], AC_MSG_RESULT(no))
+
+UT_FOUND=no
+AC_MSG_CHECKING([whether utmp has ut_name])
+AC_EGREP_HEADER(ut_name, utmp.h, [UT_FOUND=yes
+	AC_DEFINE(HAVE_NAME_IN_UTMP)],)
+AC_MSG_RESULT($UT_FOUND)
+
+if test "$UT_FOUND" = "no" ; then
+AC_MSG_CHECKING([whether utmp has ut_user])
+AC_EGREP_HEADER(ut_user, utmp.h, [UT_FOUND=yes 
+	AC_DEFINE(HAVE_USER_IN_UTMP)],)
+AC_MSG_RESULT($UT_FOUND)
+  if test "$UT_FOUND" = "no" ; then
+	AC_MSG_WARN([Couldn't determine field in utmp - assuming ut_name])
+	AC_DEFINE(HAVE_NAME_IN_UTMP)
+  fi
+fi
+
+AC_MSG_CHECKING([whether utmp has USER_PROCESS type])
+AC_TRY_COMPILE([
+#include <utmp.h>
+],
+[int i = USER_PROCESS;], [AC_MSG_RESULT(yes)
+	AC_DEFINE(HAVE_UPROCESS_TYPE)], AC_MSG_RESULT(no))
+
+dnl Checks for library functions.
+
+AC_OUTPUT(Makefile)
